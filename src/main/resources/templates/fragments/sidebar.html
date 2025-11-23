@@ -33,7 +33,49 @@
       <a th:href="@{/settings}" th:classappend="${active}=='settings' ? 'active' : ''">
         <i class="ri-settings-3-line"></i> <span>Settings</span>
       </a>
+      <div class="theme-toggle-container" style="padding: 0.5rem 1.5rem; display: flex; align-items: center; gap: 1rem; color: rgba(255,255,255,0.7);">
+        <i class="ri-moon-line"></i>
+        <span style="flex: 1; font-weight: 500;">Dark Mode</span>
+        <label class="switch-sm">
+          <input type="checkbox" id="sidebarThemeToggle" checked>
+          <span class="slider-sm round"></span>
+        </label>
+      </div>
     </div>
   </aside>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggle = document.getElementById('sidebarThemeToggle');
+        const html = document.documentElement;
+        
+        // Check saved preference
+        const savedTheme = localStorage.getItem('theme');
+        
+        // Default is dark (no data-theme attribute needed for default CSS)
+        // If savedTheme is 'light', we set data-theme="light" and uncheck the toggle
+        if (savedTheme === 'light') {
+            toggle.checked = false;
+            html.setAttribute('data-theme', 'light');
+        } else {
+            // Default or explicitly dark
+            toggle.checked = true;
+            html.removeAttribute('data-theme');
+        }
+        
+        // Handle toggle change
+        toggle.addEventListener('change', function(e) {
+            if (e.target.checked) {
+                // Switch to Dark (Default)
+                html.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                // Switch to Light
+                html.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    });
+  </script>
 </div>
   

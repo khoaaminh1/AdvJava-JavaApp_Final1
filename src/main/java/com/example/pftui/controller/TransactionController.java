@@ -4,7 +4,9 @@ import com.example.pftui.model.Transaction;
 import com.example.pftui.security.CustomUserDetails;
 import com.example.pftui.service.AccountService;
 import com.example.pftui.service.CategoryService;
+import com.example.pftui.service.ExportService;
 import com.example.pftui.service.TransactionService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -12,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -22,13 +25,16 @@ public class TransactionController {
     private final TransactionService transactionService;
     private final AccountService accountService;
     private final CategoryService categoryService;
+    private final ExportService exportService;
     
     public TransactionController(TransactionService transactionService,
                                 AccountService accountService,
-                                CategoryService categoryService) {
+                                CategoryService categoryService,
+                                ExportService exportService) {
         this.transactionService = transactionService;
         this.accountService = accountService;
         this.categoryService = categoryService;
+        this.exportService = exportService;
     }
     
     /**
@@ -149,6 +155,24 @@ public class TransactionController {
         }
         
         return "redirect:/transactions";
+    }
+    
+    /**
+     * Export transactions to CSV
+     */
+    @GetMapping("/export/csv")
+    public void exportCsv(HttpServletResponse response) throws IOException {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof CustomUserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+            String userId = userDetails.getUser().getId();
+
+            response.setContentType("text/csv; charset=UTF-8");
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Disposition", "attachment; filename=\"transactions.csv\"");
+            
+            exportService.exportTransactionsToCsv(userId, response.getWriter());
+        }
     }
 }
 
