@@ -204,8 +204,9 @@ This project is open source and available under the MIT License.
 
 ## 👨‍💻 Author
 
-**Your Name**
-- GitHub: [@khoaaminh1](https://github.com/khoaaminh1)
+TRAN MINH KHOA -Fontend
+PHAM MANH HOA - Fotend
+TRAN QUANG VINH - Backend
 
 ## 🙏 Acknowledgments
 
